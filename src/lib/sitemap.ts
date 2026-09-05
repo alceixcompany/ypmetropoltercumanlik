@@ -6,6 +6,7 @@ import type { SiteConfig } from '@/lib/domain-seo'
 import { translationServices } from '@/lib/translation-services'
 import { translationLanguages } from '@/lib/translation-languages'
 import { serviceAreas } from '@/lib/service-areas'
+import { landingPages } from '@/lib/landing-pages'
 
 export type SitemapEntry = MetadataRoute.Sitemap[number]
 
@@ -93,6 +94,15 @@ export function getStaticPageEntries(site: SiteConfig = siteConfig): MetadataRou
 
 export const staticPageEntries = getStaticPageEntries();
 
+export function getLandingPageEntries(site: SiteConfig = siteConfig): MetadataRoute.Sitemap {
+  return landingPages.map((page) => ({
+    url: absoluteSitemapUrl(`/${page.slug}`, site),
+    lastModified: page.publishedAt ? new Date(page.publishedAt) : new Date(),
+    changeFrequency: page.kind === 'guide' ? 'yearly' as const : 'monthly' as const,
+    priority: page.kind === 'guide' ? 0.7 : 0.9,
+  }))
+}
+
 export function getServiceEntries(site: SiteConfig = siteConfig): MetadataRoute.Sitemap {
   return translationServices.map((service) => ({
     url: absoluteSitemapUrl(`/hizmetlerimiz/${service.slug}`, site),
@@ -151,6 +161,7 @@ export async function getAllSitemapEntries(site: SiteConfig = siteConfig): Promi
 
     return [
       ...getStaticPageEntries(site),
+      ...getLandingPageEntries(site),
       ...getServiceEntries(site),
       ...getLanguageEntries(site),
       ...newsEntries,
@@ -158,7 +169,7 @@ export async function getAllSitemapEntries(site: SiteConfig = siteConfig): Promi
     ]
   } catch (error) {
     console.error('Sitemap oluşturulurken hata:', error)
-    return [...getStaticPageEntries(site), ...getServiceEntries(site), ...getLanguageEntries(site)]
+    return [...getStaticPageEntries(site), ...getLandingPageEntries(site), ...getServiceEntries(site), ...getLanguageEntries(site)]
   }
 }
 

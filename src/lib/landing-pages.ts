@@ -1,3 +1,5 @@
+import { requestedLandingPages } from '@/lib/requested-landing-pages';
+
 export type LandingSection = {
   title: string;
   paragraphs: readonly string[];
@@ -305,6 +307,7 @@ export const landingPages: readonly LandingPage[] = [
       { question: 'Kurumsal projelerde düzenli destek sağlıyor musunuz?', answer: 'Evet. Tekrarlayan projelerde terminoloji birliği, dosya planı ve teslim takvimi oluşturulabilir.' },
     ],
   },
+  ...requestedLandingPages,
 ];
 
 export function getLandingPage(slug: string) {

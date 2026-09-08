@@ -190,8 +190,9 @@ export const fetchContactInfo = createAsyncThunk(
         return null;
       }
       
-      const doc = querySnapshot.docs[0];
-      return { id: doc.id, ...doc.data() } as ContactInfo;
+      const contactDoc = querySnapshot.docs.find((item) => item.data().contentType !== 'corporate_references');
+      if (!contactDoc) return null;
+      return { id: contactDoc.id, ...contactDoc.data() } as ContactInfo;
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Unknown error');
     }
@@ -205,7 +206,9 @@ export const updateContactInfo = createAsyncThunk(
       const querySnapshot = await getDocs(collection(db, 'contact_info'));
       let docRef;
       
-      if (querySnapshot.empty) {
+      const existingContactDoc = querySnapshot.docs.find((item) => item.data().contentType !== 'corporate_references');
+
+      if (!existingContactDoc) {
         // Create new document if none exists
         const newDoc = await addDoc(collection(db, 'contact_info'), {
           ...contactInfo,
@@ -214,7 +217,7 @@ export const updateContactInfo = createAsyncThunk(
         docRef = newDoc;
       } else {
         // Update existing document
-        docRef = querySnapshot.docs[0].ref;
+        docRef = existingContactDoc.ref;
         await updateDoc(docRef, {
           ...contactInfo,
           updatedAt: new Date().toISOString(),

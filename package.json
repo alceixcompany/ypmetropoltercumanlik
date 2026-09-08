@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "seed": "node scripts/seed-beyvip.mjs",
-    "seed:news": "node scripts/seed-yp-news.mjs"
+    "seed:news": "node scripts/seed-yp-news.mjs",
+    "seed:references": "node scripts/seed-references.mjs"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^41.4.2",

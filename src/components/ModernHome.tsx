@@ -16,6 +16,7 @@ import {
   FiShield,
 } from 'react-icons/fi';
 import News from '@/components/News';
+import CorporateReferences from '@/components/CorporateReferences';
 import { siteConfig } from '@/lib/seo';
 
 const services = [
@@ -283,6 +284,8 @@ export default function ModernHome() {
           </div>
         </div>
       </section>
+
+      <CorporateReferences />
 
       <News />
 

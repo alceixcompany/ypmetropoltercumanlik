@@ -72,7 +72,8 @@ export function createSeoMetadata({
   }
 
   return {
-    title,
+    // İngilizce sayfalarda Türkçe başlık şablonu (" | YP Metropol Tercüme") eklenmesin
+    title: locale === 'en' ? { absolute: title } : title,
     description,
     keywords: locale === 'en' ? [site.name, ...keywords] : [site.name, site.shortName, ...serviceKeywords, ...site.keywords, ...keywords],
     alternates: {

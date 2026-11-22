@@ -1,4 +1,5 @@
 import React from 'react';
+import { serviceHref } from '@/lib/site-links';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FiArrowRight, FiCheck, FiFileText, FiGlobe, FiShield } from 'react-icons/fi';
@@ -62,7 +63,7 @@ const ServicesPage = async () => {
         '@type': 'Service',
         name: service.title,
         description: service.description,
-        url: absoluteUrl(`/hizmetlerimiz/${service.slug}`, activeSite),
+        url: absoluteUrl(serviceHref(service.slug), activeSite),
         image: absoluteUrl(service.image, activeSite),
         provider: {
           '@type': 'ProfessionalService',
@@ -150,7 +151,7 @@ const ServicesPage = async () => {
                       ))}
                     </div>
 
-                    <Link href={`/hizmetlerimiz/${service.slug}`} className="mt-7 flex items-center justify-between border-t border-[#171614]/10 pt-5 text-sm font-semibold text-[#292722] transition group-hover:text-[#916924]">
+                    <Link href={serviceHref(service.slug)} className="mt-7 flex items-center justify-between border-t border-[#171614]/10 pt-5 text-sm font-semibold text-[#292722] transition group-hover:text-[#916924]">
                       Hizmeti inceleyin
                       <FiArrowRight className="transition-transform group-hover:translate-x-1" />
                     </Link>

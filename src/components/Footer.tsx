@@ -17,19 +17,34 @@ const pageLinks = [
 ] as const;
 
 const footerServices = [
-  'Pasaport Tercümesi',
-  'Yeminli Tercüme',
-  'Noter Onaylı Tercüme',
-  'Diploma Tercümesi',
-  'Vize Evrakları',
-  'Hukuki Tercüme',
-  'Arapça Tercüme',
-  'İngilizce Tercüme',
-  'Rusça Tercüme',
-  'Farsça Tercüme',
-  'Fransızca Tercüme',
-  'Apostil Süreci',
-] as const;
+  { label: 'Pasaport Tercümesi', href: '/pasaport-tercumesi' },
+  { label: 'Yeminli Tercüme', href: '/yeminli-tercume' },
+  { label: 'Noter Onaylı Tercüme', href: '/noter-onayli-tercume' },
+  { label: 'Diploma Tercümesi', href: '/diploma-transkript-tercumesi' },
+  { label: 'Vize Evrakları', href: '/vize-evraklari-tercumesi' },
+  { label: 'Hukuki Tercüme', href: '/hukuki-tercume' },
+  { label: 'Arapça Tercüme', href: '/arapca-tercume' },
+  { label: 'İngilizce Tercüme', href: '/ingilizce-tercume' },
+  { label: 'Rusça Tercüme', href: '/rusca-tercume' },
+  { label: 'Almanca Tercüme', href: '/almanca-tercume' },
+  { label: 'Fransızca Tercüme', href: '/fransizca-tercume' },
+  { label: 'Apostil Süreci', href: '/apostil-onayi' },
+];
+
+const footerAreas = [
+  { label: 'Mecidiyeköy', href: '/mecidiyekoy-tercume' },
+  { label: 'Şişli', href: '/sisli-tercume-burosu' },
+  { label: 'Gayrettepe', href: '/gayrettepe-tercume' },
+  { label: 'Levent', href: '/levent-tercume' },
+  { label: 'Maslak', href: '/maslak-tercume' },
+  { label: 'Çağlayan', href: '/caglayan-tercume' },
+  { label: 'Fulya', href: '/fulya-tercume' },
+  { label: 'Nişantaşı', href: '/nisantasi-tercume' },
+  { label: 'Taksim', href: '/taksim-tercume' },
+  { label: 'Beşiktaş', href: '/besiktas-tercume' },
+  { label: 'Kağıthane', href: '/kagithane-tercume' },
+  { label: 'Etiler', href: '/etiler-tercume' },
+];
 
 const Footer = () => {
   const pathname = usePathname();
@@ -99,7 +114,9 @@ const Footer = () => {
               <h3 className="font-serif text-2xl text-[var(--lale-gold)]">{t('Hizmetler')}</h3>
               <ul className="mt-5 grid grid-cols-2 gap-x-6 gap-y-3 text-sm text-[var(--dream-text)]">
                 {footerServices.map((service) => (
-                  <li key={service}>{t(service)}</li>
+                  <li key={service.href}>
+                    <Link href={service.href} className="transition-colors hover:text-[var(--lale-gold)]">{t(service.label)}</Link>
+                  </li>
                 ))}
               </ul>
             </div>
@@ -138,6 +155,17 @@ const Footer = () => {
               </ul>
             </div>
           </div>
+        </div>
+
+        <div className="border-t border-[rgba(223,167,69,0.18)] py-6">
+          <nav aria-label="Hizmet bölgeleri" className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-[var(--dream-text)] md:justify-start">
+            <span className="font-semibold text-[var(--lale-gold)]">Hizmet bölgeleri:</span>
+            {footerAreas.map((area) => (
+              <Link key={area.href} href={area.href} className="transition-colors hover:text-[var(--lale-gold)]">{area.label} Tercüme</Link>
+            ))}
+            <Link href="/hizmet-bolgelerimiz" className="transition-colors hover:text-[var(--lale-gold)]">Tüm bölgeler</Link>
+            <Link href="/en" hrefLang="en" className="transition-colors hover:text-[var(--lale-gold)]">English</Link>
+          </nav>
         </div>
 
         <div className="border-t border-[rgba(223,167,69,0.18)] py-6">

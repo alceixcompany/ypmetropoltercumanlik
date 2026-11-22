@@ -37,6 +37,10 @@ type SeoMetadataOptions = {
   publishedTime?: string;
   modifiedTime?: string;
   site?: SiteConfig;
+  /** Bu sayfanın diğer dillerdeki karşılıkları (hreflang), ör. { en: '/en/sworn-translator-istanbul' } */
+  alternateLanguages?: Record<string, string>;
+  /** Sayfanın kendi dili (varsayılan tr-TR) */
+  locale?: 'tr-TR' | 'en';
 };
 
 export function absoluteUrl(path = "/", site: SiteConfig = siteConfig) {
@@ -54,26 +58,34 @@ export function createSeoMetadata({
   publishedTime,
   modifiedTime,
   site = siteConfig,
+  alternateLanguages,
+  locale = 'tr-TR',
 }: SeoMetadataOptions): Metadata {
   const url = absoluteUrl(path, site);
   const imageUrl = absoluteUrl(image || site.defaultImage, site);
+  const languages: Record<string, string> = { [locale]: url };
+  for (const [lang, altPath] of Object.entries(alternateLanguages ?? {})) {
+    languages[lang] = absoluteUrl(altPath, site);
+  }
+  if (Object.keys(languages).length > 1) {
+    languages['x-default'] = languages['tr-TR'] ?? url;
+  }
 
   return {
-    title,
+    // İngilizce sayfalarda Türkçe başlık şablonu (" | YP Metropol Tercüme") eklenmesin
+    title: locale === 'en' ? { absolute: title } : title,
     description,
-    keywords: [site.name, site.shortName, ...serviceKeywords, ...site.keywords, ...keywords],
+    keywords: locale === 'en' ? [site.name, ...keywords] : [site.name, site.shortName, ...serviceKeywords, ...site.keywords, ...keywords],
     alternates: {
       canonical: url,
-      languages: {
-        "tr-TR": url,
-      },
+      languages,
     },
     openGraph: {
       title,
       description,
       url,
       siteName: site.name,
-      locale: site.locale,
+      locale: locale === 'en' ? 'en_US' : site.locale,
       type,
       images: [
         {

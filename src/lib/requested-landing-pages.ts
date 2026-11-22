@@ -88,6 +88,8 @@ type ServiceConfig = {
   scope: readonly string[];
   expertise: string;
   keywords: readonly string[];
+  extra?: readonly LandingSection[];
+  faqs?: readonly LandingFaq[];
 };
 
 function createServicePage(config: ServiceConfig): LandingPage {
@@ -117,12 +119,13 @@ function createServicePage(config: ServiceConfig): LandingPage {
         paragraphs: ['Dosyanızı ve beklentinizi iletmenizden sonra kapsam belirlenir, uygun uzman görevlendirilir ve teslim planı paylaşılır. Süreç boyunca gerekli sorular tek iletişim noktası üzerinden yönetilir.'],
         bullets: ['Dosya ve ihtiyaç analizi', 'Uzman eşleştirme', 'Üretim ve ara kontrol', 'Son okuma ve teslim'],
       },
+      ...(config.extra ?? []),
       {
         title: 'Teslim süresi ve fiyatlandırma',
         paragraphs: ['Süre ve ücret; dosyanın uzunluğu, teknik yoğunluğu, kaynak ve hedef dil, teslim biçimi ile varsa onay ihtiyacına göre belirlenir. Okunaklı dosyayı gönderdiğinizde net teklif hazırlanır.'],
       },
     ],
-    faqs: [
+    faqs: config.faqs ?? [
       { question: `${config.title} için nasıl teklif alabilirim?`, answer: 'Dosyayı WhatsApp veya e-posta ile gönderip hedef dili, kullanım amacını ve teslim tarihinizi belirtmeniz yeterlidir.' },
       { question: 'Acil teslim mümkün mü?', answer: 'Dosyanın uzunluğu, dili ve uzmanlık alanı incelendikten sonra mümkün olan en hızlı ve güvenli teslim planı paylaşılır.' },
       { question: 'Kurumsal ve düzenli projeler kabul ediliyor mu?', answer: 'Evet. Düzenli projelerde terminoloji listesi, teslim takvimi ve kalite standardı oluşturularak süreklilik sağlanabilir.' },
@@ -130,15 +133,15 @@ function createServicePage(config: ServiceConfig): LandingPage {
   };
 }
 
-type LocationConfig = { slug: string; name: string; nearby: string };
+type LocationConfig = { slug: string; name: string; nearby: string; local?: LandingSection; title?: string; description?: string };
 
-function createLocationPage({ slug, name, nearby }: LocationConfig): LandingPage {
+function createLocationPage({ slug, name, nearby, local, title, description }: LocationConfig): LandingPage {
   return {
     slug,
     kind: 'location',
     eyebrow: 'HİZMET BÖLGESİ',
-    title: `${name} Tercüme Bürosu`,
-    description: `${name} ve çevresinde yeminli, noter onaylı, hukuki, akademik, teknik ve sözlü tercüme hizmetleri.`,
+    title: title ?? `${name} Tercüme Bürosu`,
+    description: description ?? `${name} ve çevresinde yeminli, noter onaylı, hukuki, akademik, teknik ve sözlü tercüme hizmetleri.`,
     intro: `Mecidiyeköy merkezli YP Metropol Tercüme, ${name} ve çevresindeki bireysel ve kurumsal müşterilere ofiste ve online belge kabulüyle profesyonel destek sunar.`,
     image: '/yp-metropol/home/hero-office-v2.webp',
     imageAlt: `${name} tercüme bürosu ve profesyonel çeviri hizmeti`,
@@ -150,6 +153,7 @@ function createLocationPage({ slug, name, nearby }: LocationConfig): LandingPage
         paragraphs: ['Pasaport, diploma, nüfus kaydı, vekâletname ve diğer resmî belgeler alanına uygun yeminli tercümanla hazırlanır. Kurum talebine göre noter tasdiki ve apostil adımları planlanır.'],
         bullets: ['Yeminli tercüme', 'Noter tasdikli tercüme', 'Apostil yönlendirmesi', 'Konsolosluk ve başvuru belgeleri'],
       },
+      ...(local ? [local] : []),
       {
         title: `${name} ve yakın çevresine hizmet`,
         paragraphs: [`${name}, ${nearby} çevresindeki kişi, şirket, hukuk bürosu, eğitim ve sağlık kuruluşları için yazılı ve sözlü tercüme desteği sağlanır.`, 'Belgenin aslının gerekmediği ön inceleme ve teklif aşamaları tamamen online yürütülebilir.'],
@@ -215,6 +219,10 @@ const languagePages: readonly LandingPage[] = [
   createLanguagePage({ slug: 'hintce-tercume', language: 'Hintçe', country: 'Hindistan', intro: 'Hintçe tercümede Devanagari yazısı, bölgesel dil etkileri ve hedef kitlenin kullanım alışkanlıkları dikkate alınır.', specialistNote: 'Hintçe, Devanagari alfabesiyle yazılır ve gündelik kullanımda farklı bölgesel dillerle etkileşim gösterir. Özel adlar ile resmî terimlerin aktarımı dikkatle yapılmalıdır.', highlights: ['Devanagari alfabesi', 'Ticari ve resmî içerik', 'Sözlü tercüman desteği'], keywords: ['hintce tercume', 'hintce yeminli tercuman', 'turkce hintce ceviri'] }),
   createLanguagePage({ slug: 'ingilizce-tercume', language: 'İngilizce', country: 'İngilizce konuşulan ülkeler', intro: 'İngilizce tercümeler hedef ülke, sektör ve kullanım amacına göre terminoloji ile üslup yönünden yerelleştirilir.', specialistNote: 'İngiliz ve Amerikan İngilizcesi başta olmak üzere farklı bölgelerde yazım, kelime seçimi ve resmî belge kalıpları değişebilir. Hedef ülke proje başında belirlenmelidir.', highlights: ['İngiliz ve Amerikan İngilizcesi', 'Tüm uzmanlık alanları', 'Yeminli, noter onaylı ve sözlü tercüme'], keywords: ['ingilizce tercume', 'ingilizce yeminli tercuman', 'ingilizce noter onayli tercume'] }),
   createLanguagePage({ slug: 'ibranice-tercume', language: 'İbranice', country: 'İsrail', intro: 'İbranice metinler sağdan sola yazı düzeni, resmî terminoloji ve bağlama dayalı anlam özellikleri korunarak hazırlanır.', specialistNote: 'İbranicede ünlü işaretlerinin çoğu metinde yazılmaması ve sağdan sola sayfa düzeni bağlama hâkimiyet gerektirir. Resmî ve teknik belgelerde terim seçimi ayrıca doğrulanmalıdır.', highlights: ['Sağdan sola belge düzeni', 'Resmî ve hukuki terminoloji', 'Yeminli tercüme desteği'], keywords: ['ibranice tercume', 'ibranice yeminli tercuman', 'turkce ibranice ceviri'] }),
+  createLanguagePage({ slug: 'fransizca-tercume', language: 'Fransızca', country: 'Fransa, Belçika, İsviçre ve Kanada', intro: 'Fransızca belgeler; Fransa, Belçika, İsviçre, Kanada ve Kuzey Afrika’daki kullanım farkları ile hedef kurumun resmî dil kalıpları dikkate alınarak hazırlanır.', specialistNote: 'Fransızcada resmî yazışma dili, hukuki kalıplar ve ülkeye göre değişen terminoloji (örneğin Fransa ile Kanada arasındaki farklar) metnin amacına göre seçilmelidir.', highlights: ['Konsolosluk ve vize dosyaları', 'Hukuki ve akademik belgeler', 'Yeminli ve noter onaylı tercüme'], keywords: ['fransizca tercume', 'fransizca yeminli tercuman', 'fransizca noter onayli tercume'] }),
+  createLanguagePage({ slug: 'lehce-tercume', language: 'Lehçe', country: 'Polonya', intro: 'Lehçe tercümelerde özel karakterler, çekim yapısı ve Polonya’daki resmî kurumların belge formatı birlikte değerlendirilir.', specialistNote: 'Lehçede isimlerin çekime göre değişmesi ve özel harflerin doğru yazımı belge tutarlılığı için kritiktir. Ticari ve resmî metinlerde yerleşik karşılıklar kullanılmalıdır.', highlights: ['Özel karakter ve isim kontrolü', 'Ticari ve resmî belgeler', 'Yeminli tercüme desteği'], keywords: ['lehce tercume', 'lehce yeminli tercuman', 'turkce lehce ceviri'] }),
+  createLanguagePage({ slug: 'yunanca-tercume', language: 'Yunanca', country: 'Yunanistan ve Kıbrıs', intro: 'Yunanca belgeler Yunan alfabesiyle yazılmış isimlerin doğru aktarımı ve Yunanistan ile Kıbrıs’taki resmî kullanım dikkate alınarak çevrilir.', specialistNote: 'Yunan alfabesindeki isimlerin Latin harflerine aktarımı, kişinin diğer belgeleriyle tutarlı olmalıdır. Tapu, miras ve vatandaşlık belgelerinde eski terminoloji de görülebilir.', highlights: ['Yunan alfabesi ve isim aktarımı', 'Tapu ve miras belgeleri', 'Yeminli ve noter onaylı tercüme'], keywords: ['yunanca tercume', 'yunanca yeminli tercuman', 'yunanca noter onayli tercume'] }),
+  createLanguagePage({ slug: 'cekce-tercume', language: 'Çekçe', country: 'Çekya', intro: 'Çekçe tercümelerde aksanlı harfler, isim çekimleri ve Çekya’daki kurumların belge biçimi kaynakla uyumlu şekilde korunur.', specialistNote: 'Çekçede aksanlı harflerin eksik yazılması isim ve adreslerde hataya yol açabilir. Teknik ve ticari metinlerde sektörde yerleşik Çekçe karşılıklar tercih edilmelidir.', highlights: ['Aksanlı harf ve isim kontrolü', 'Ticari ve teknik metinler', 'Yeminli tercüme desteği'], keywords: ['cekce tercume', 'cekce yeminli tercuman', 'turkce cekce ceviri'] }),
 ];
 
 const servicePages: readonly LandingPage[] = [
@@ -226,19 +234,255 @@ const servicePages: readonly LandingPage[] = [
   createServicePage({ slug: 'yazili-tercume', title: 'Yazılı Tercüme', description: 'Bireysel ve kurumsal metinlerde uzmanlık alanına, hedef kitleye ve kullanım amacına uygun kontrollü çeviri.', intro: 'Yazılı tercümede içerik analizi, doğru uzmanla eşleştirme, terminoloji yönetimi ve son kontrol bir bütün olarak yürütülür.', image: '/yp-metropol/translation.webp', highlights: ['Uzman tercüman eşleştirmesi', 'Terminoloji ve biçim kontrolü', 'Dijital ve basılı teslim'], scope: ['Hukuki ve resmî belgeler', 'Akademik ve tıbbi metinler', 'Teknik ve finansal dokümanlar', 'Web sitesi ve kurumsal içerikler'], expertise: 'Belgenin alanına hâkim tercüman seçilir; çok sayfalı dosyalarda terim birliği ve sayfa düzeni proje boyunca korunur.', keywords: ['yazili tercume', 'profesyonel ceviri', 'belge tercumesi', 'kurumsal yazili tercume'] }),
   createServicePage({ slug: 'ekonomi-ve-finans-tercume', title: 'Ekonomi ve Finans Tercümesi', description: 'Finansal rapor, bilanço, yatırım, denetim ve bankacılık belgelerinde terminoloji odaklı profesyonel tercüme.', intro: 'Finans metinlerinde rakamsal bütünlük, dönem ve para birimi ifadeleri ile yerleşik muhasebe terminolojisi titizlikle korunur.', image: '/yp-metropol/document.webp', highlights: ['Finansal terminoloji', 'Rakam ve tablo kontrolü', 'Gizli dosya yönetimi'], scope: ['Faaliyet ve denetim raporları', 'Bilanço ve gelir tabloları', 'Yatırımcı sunumları', 'Banka ve sigorta belgeleri'], expertise: 'Finansal kavramların ülkelere göre farklılaşabilen karşılıkları bağlama göre seçilir; tablo, dipnot, yüzde ve para birimleri ayrıca kontrol edilir.', keywords: ['ekonomi tercume', 'finans tercume', 'bilanço tercumesi', 'finansal rapor cevirisi'] }),
   createServicePage({ slug: 'patent-tercume', title: 'Patent Tercümesi', description: 'Patent başvurusu, tarifname, istem ve teknik çizim açıklamalarında doğru ve tutarlı terminoloji.', intro: 'Patent metinlerinde teknik ayrıntı ile hukuki kapsam birlikte korunmalı; aynı kavram belge boyunca tek ve açık bir karşılıkla kullanılmalıdır.', image: '/yp-metropol/document.webp', highlights: ['Teknik ve hukuki uzmanlık', 'İstemlerde terim tutarlılığı', 'Başvuru formatına uygunluk'], scope: ['Patent tarifnameleri', 'İstemler ve özetler', 'Teknik çizim açıklamaları', 'Araştırma ve inceleme raporları'], expertise: 'Patent tercümanı buluşun teknik alanını ve başvuru dilini birlikte değerlendirir. Belirsiz veya değişken terim kullanımı istem kapsamını etkileyebileceğinden çapraz kontrol yapılır.', keywords: ['patent tercume', 'patent cevirisi', 'patent tarifnamesi tercumesi', 'teknik istem cevirisi'] }),
+  createServicePage({ slug: 'akademik-tercume', title: 'Akademik Tercüme', description: 'Makale, tez, bildiri, burs ve üniversite başvurularında alan terminolojisine ve akademik üsluba uygun profesyonel tercüme.', intro: 'Akademik tercümede amaç, metni yalnızca başka bir dile aktarmak değil; hedef dergi, üniversite veya kurumun beklediği akademik dil ve biçimle yeniden kurmaktır.', image: '/yp-metropol/document.webp', highlights: ['Alanında uzman akademik tercüman', 'Dergi ve üniversite formatı', 'Redaksiyon ve son okuma'], scope: ['Makale ve bildiri tercümesi', 'Tez ve tez özeti', 'Burs, niyet ve referans mektupları', 'Diploma, transkript ve ders içerikleri'], expertise: 'Tercüman makalenin bilim alanına göre seçilir; atıf düzeni, kısaltmalar, tablo ve şekil açıklamaları kaynakla karşılaştırılarak kontrol edilir.', keywords: ['akademik tercume', 'makale tercumesi', 'tez tercumesi', 'akademik ceviri'], extra: [{ title: 'Yayın ve başvuru odaklı hazırlık', paragraphs: ['Hedef derginin yazım kılavuzu, kelime sınırı ve İngiliz/Amerikan İngilizcesi tercihi proje başında belirlenir. Hakem değerlendirmesinden dönen düzeltmelerde aynı terminoloji korunur.', 'Yurt dışı üniversite başvurularında diploma ve transkript için yeminli tercüme, noter tasdiki veya apostil gerekip gerekmediği başvuru yapılacak kurumun şartlarına göre planlanır.'], bullets: ['Dergi yazım kılavuzuna uyum', 'Hakem düzeltmelerinde süreklilik', 'Denklik ve kayıt belgeleri'] }] }),
+  createServicePage({ slug: 'tibbi-tercume', title: 'Tıbbi Tercüme', description: 'Epikriz, sağlık raporu, tahlil sonucu, klinik araştırma ve medikal cihaz dokümanlarında hassas ve gizli tercüme.', intro: 'Tıbbi tercümede tek bir kelime hatası teşhis veya tedavi anlamını değiştirebilir; bu nedenle metinler tıbbi terminolojiye hâkim tercümanlarla ve gizlilik esasıyla hazırlanır.', image: '/yp-metropol/document.webp', highlights: ['Tıbbi terminoloji uzmanlığı', 'Hasta verisi gizliliği', 'Bağımsız kalite kontrolü'], scope: ['Epikriz ve taburcu raporları', 'Sağlık kurulu ve heyet raporları', 'Tahlil, patoloji ve görüntüleme sonuçları', 'Klinik araştırma ve ilaç prospektüsleri'], expertise: 'Kısaltmalar branşa göre farklı anlamlara gelebileceği için bağlama göre çözülür; dozaj, birim ve sayısal değerler kaynakla tek tek karşılaştırılır.', keywords: ['tibbi tercume', 'saglik raporu tercumesi', 'epikriz tercumesi', 'medikal ceviri'], extra: [{ title: 'Yurt dışında tedavi ve sağlık turizmi', paragraphs: ['Yurt dışında tedavi olacak hastaların raporları ile Türkiye’ye tedavi için gelen yabancı hastaların tedavi planı, onam formu ve faturaları hedef ülkenin kurumlarına uygun dille hazırlanır.', 'Sigorta şirketleri veya resmî kurumlar yeminli tercüme talep ettiğinde tercüman imzası ve gerekirse noter tasdiki birlikte planlanır.'], bullets: ['Tedavi planı ve onam formları', 'Sigorta ve fatura belgeleri', 'Yeminli tıbbi tercüme'] }] }),
+  createServicePage({ slug: 'teknik-tercume', title: 'Teknik Tercüme', description: 'Kullanım kılavuzu, teknik şartname, proje dosyası, güvenlik bilgi formu ve mühendislik dokümanlarında uzman tercüme.', intro: 'Teknik tercümede doğruluk kadar tutarlılık da önemlidir: aynı parça, işlem veya ölçü birimi belge boyunca tek ve doğru karşılıkla kullanılmalıdır.', image: '/yp-metropol/document.webp', highlights: ['Sektörel terminoloji', 'Terim listesi ve tutarlılık', 'Tablo ve çizim düzeni korunur'], scope: ['Kullanım ve bakım kılavuzları', 'Teknik şartname ve ihale dosyaları', 'Güvenlik bilgi formları (SDS)', 'Makine, enerji, inşaat ve bilişim dokümanları'], expertise: 'Mühendislik alanına göre tercüman seçilir; ölçü birimleri, standart numaraları, uyarı ifadeleri ve parça adları terim listesiyle kontrol edilir.', keywords: ['teknik tercume', 'kullanim kilavuzu tercumesi', 'teknik sartname cevirisi', 'muhendislik tercumesi'], extra: [{ title: 'Uzun ve tekrarlayan teknik projeler', paragraphs: ['Çok ciltli kılavuz veya sürekli güncellenen dokümanlarda müşteriye özel terim listesi oluşturulur; yeni sürümlerde yalnızca değişen bölümler çevrilerek süre ve maliyet azaltılır.', 'Word, Excel, PDF ve düzenlenebilir formatlarda gelen dosyalar mümkün olduğunca orijinal sayfa düzeniyle teslim edilir.'], bullets: ['Müşteriye özel terim listesi', 'Sürüm güncellemelerinde fark çevirisi', 'Orijinal formatta teslim'] }] }),
+  createServicePage({ slug: 'simultane-tercume', title: 'Simultane Tercüme', description: 'Konferans, kongre, seminer ve hibrit etkinliklerde kabin ve ekipman desteğiyle eş zamanlı profesyonel tercüme.', intro: 'Simultane tercümede konuşma kesintisiz akarken tercüman aynı anda hedef dile aktarır; bu nedenle tercüman seçimi, hazırlık materyali ve teknik altyapı etkinliğin başarısını doğrudan belirler.', image: '/yp-metropol/interpreting.webp', highlights: ['Deneyimli konferans tercümanları', 'Kabin ve ekipman koordinasyonu', 'Hibrit ve online etkinlikler'], scope: ['Uluslararası kongre ve konferanslar', 'Bayi toplantıları ve lansmanlar', 'Eğitim ve seminerler', 'Online ve hibrit toplantılar'], expertise: 'Uzun oturumlarda tercümanlar dönüşümlü çalışır; konuşma metinleri, sunumlar ve özel isim listesi etkinlikten önce tercümanlarla paylaşılır.', keywords: ['simultane tercume', 'simultane tercuman', 'konferans tercumani', 'es zamanli tercume'], extra: [{ title: 'Etkinlik öncesi planlama', paragraphs: ['Etkinlik tarihi, süresi, dil çiftleri, katılımcı sayısı ve salon bilgisi alındıktan sonra tercüman sayısı ve ekipman ihtiyacı belirlenir.', 'Sunum dosyaları ve konuşmacı notları önceden iletildiğinde tercümanlar terminolojiye hazırlıklı gelir; bu da çevirinin akıcılığını artırır.'], bullets: ['Tercüman sayısı ve vardiya planı', 'Kabin, kulaklık ve ses sistemi', 'Hazırlık materyali paylaşımı'] }] }),
+  createServicePage({ slug: 'ardil-tercume', title: 'Ardıl Tercüme', description: 'İş görüşmesi, noter işlemi, fabrika ziyareti ve küçük toplantılarda konuşmacının ardından profesyonel sözlü tercüme.', intro: 'Ardıl tercümede konuşmacı belirli aralıklarla durur ve tercüman söyleneni hedef dile aktarır; ekipman gerektirmediği için küçük grup toplantıları ve resmî işlemler için idealdir.', image: '/yp-metropol/interpreting.webp', highlights: ['Ekipman gerektirmez', 'Noter ve resmî işlemler', 'Sektöre uygun tercüman'], scope: ['İş görüşmeleri ve müzakereler', 'Noterde vekâletname ve satış işlemleri', 'Fabrika ve saha ziyaretleri', 'Basın toplantıları ve röportajlar'], expertise: 'Tercüman toplantının konusu ve tarafları hakkında önceden bilgilendirilir; teknik veya hukuki görüşmelerde ilgili alanda deneyimli tercüman görevlendirilir.', keywords: ['ardil tercume', 'ardil tercuman', 'noter tercumani', 'is gorusmesi tercumani'], extra: [{ title: 'Noter işlemlerinde tercüman', paragraphs: ['Türkçe bilmeyen kişilerin noterde vekâletname, satış veya muvafakatname gibi işlemleri için yeminli tercüman eşliği gerekebilir. Tercümanın ilgili noterde yeminli olup olmadığı işlemden önce kontrol edilir.', 'İşlem saati, noter adresi ve belge içeriği önceden paylaşıldığında süreç tek seferde tamamlanabilir.'], bullets: ['Noterde yeminli tercüman', 'Vekâletname ve satış işlemleri', 'Randevu ve belge hazırlığı'] }] }),
+  createServicePage({ slug: 'acil-tercume', title: 'Acil Tercüme', description: 'Zaman kritik belge, başvuru ve ihale dosyaları için öncelikli planlama, hızlı ve kontrollü tercüme teslimi.', intro: 'Acil tercümede hız, kaliteden ödün vermeden sağlanmalıdır; bu nedenle dosya önce kapsam yönünden incelenir, gerekirse birden fazla tercüman ve ayrı bir editörle çalışılır.', image: '/yp-metropol/translation.webp', highlights: ['Öncelikli iş akışı', 'Net teslim saati', 'Hızlı ama kontrollü süreç'], scope: ['Vize ve konsolosluk randevusu yaklaşan belgeler', 'İhale ve teklif dosyaları', 'Mahkeme ve resmî kurum son tarihleri', 'Aynı gün noter onayı gereken belgeler'], expertise: 'Uzun dosyalar bölümlere ayrılarak paralel çalışılır; terim birliği ortak bir terim listesiyle korunur ve teslimden önce tek editör tüm metni kontrol eder.', keywords: ['acil tercume', 'hizli tercume', 'ayni gun tercume', 'acil yeminli tercume'], extra: [{ title: 'Acil işlerde en hızlı yol', paragraphs: ['Belgenin okunaklı fotoğrafını veya PDF dosyasını WhatsApp ya da e-posta ile göndermek süreci başlatmanın en hızlı yoludur. Hedef dil, kullanım yeri ve son teslim saati belirtildiğinde gerçekçi bir teslim zamanı hemen paylaşılır.', 'Kısa resmî belgelerde aynı gün teslim çoğu zaman mümkündür; noter onayı gereken işlerde noterin çalışma saatleri de plana dahil edilir.'], bullets: ['WhatsApp ile anında gönderim', 'Gerçekçi teslim saati', 'Noter saatlerine göre planlama'] }] }),
+  createServicePage({ slug: 'web-site-tercume', title: 'Web Sitesi Tercümesi', description: 'Web sitesi, e-ticaret ve dijital içeriklerin hedef pazara uygun çeviri, lokalizasyon ve çok dilli SEO uyumu.', intro: 'Web sitesi tercümesi, sayfaları kelime kelime çevirmekten öte; hedef ülkenin arama alışkanlıklarına, kültürüne ve satın alma diline uygun bir yerelleştirme çalışmasıdır.', image: '/yp-metropol/translation.webp', highlights: ['Lokalizasyon ve kültürel uyum', 'Çok dilli SEO', 'CMS ve dosya formatı desteği'], scope: ['Kurumsal web siteleri', 'E-ticaret ürün ve kategori metinleri', 'Uygulama ve yazılım arayüzleri', 'Blog, kampanya ve e-posta içerikleri'], expertise: 'Hedef pazarda kullanılan anahtar kelimeler araştırılır; başlık, meta açıklama, URL ve görsel alt metinleri de çevrilerek arama motorlarında görünürlük korunur.', keywords: ['web sitesi tercumesi', 'web site cevirisi', 'lokalizasyon', 'e-ticaret tercumesi'], extra: [{ title: 'Çok dilli SEO ve teknik uyum', paragraphs: ['Her dil için ayrı sayfa yapısı, hreflang etiketleri ve yerel anahtar kelimeler planlanarak çevrilmiş sayfaların ilgili ülkelerin aramalarında çıkması hedeflenir.', 'XML, JSON, PO, XLIFF veya CSV gibi dosya formatlarıyla çalışılabilir; çeviri sonrası metinlerin arayüzde taşma veya bozulma yapmadığı kontrol edilir.'], bullets: ['Hreflang ve URL yapısı', 'Yerel anahtar kelime araştırması', 'Dosya formatı ve arayüz kontrolü'] }] }),
+  createServicePage({ slug: 'pasaport-tercumesi', title: 'Pasaport Tercümesi', description: 'Vize, oturum izni, evlilik, noter ve resmî başvurular için yeminli ve noter onaylı pasaport tercümesi.', intro: 'Pasaport tercümesi kısa bir belge gibi görünse de isimlerin, doğum yerinin ve belge numaralarının hatasız aktarılması başvurunun kabulü için kritik önemdedir.', image: '/yp-metropol/document.webp', highlights: ['İsim ve numara kontrolü', 'Yeminli ve noter onaylı', 'Hızlı teslim'], scope: ['Oturum izni ve ikamet başvuruları', 'Yabancı evlilik işlemleri', 'Noterde kimlik tespiti', 'Banka, tapu ve şirket işlemleri'], expertise: 'Latin dışı alfabelerle yazılmış isimlerin Türkçe yazımı, kişinin diğer belgeleriyle tutarlı olacak şekilde belirlenir; pasaport numarası ve tarihler iki kez kontrol edilir.', keywords: ['pasaport tercumesi', 'pasaport cevirisi', 'noter onayli pasaport tercumesi', 'yeminli pasaport tercumesi'], extra: [{ title: 'Pasaport tercümesi hangi işlemlerde istenir?', paragraphs: ['Türkiye’de oturum izni, yabancı evlilik, noter işlemleri, tapu devri, banka hesabı açılışı ve şirket kuruluşu gibi işlemlerde yabancı pasaportun noter onaylı Türkçe tercümesi sıklıkla talep edilir.', 'İşlemi yapacağınız kurumun yeminli tercüme mi yoksa noter onaylı tercüme mi istediğini önceden öğrenmeniz gereksiz masrafı önler.'], bullets: ['Oturum izni ve ikamet', 'Evlilik ve noter işlemleri', 'Tapu, banka ve şirket kuruluşu'] }] }),
+  createServicePage({ slug: 'diploma-transkript-tercumesi', title: 'Diploma ve Transkript Tercümesi', description: 'Denklik, yurt dışı eğitim, iş başvurusu ve göç süreçleri için yeminli, noter onaylı ve apostilli diploma ve transkript tercümesi.', intro: 'Diploma ve transkript tercümesinde ders adları, not sistemleri ve derece unvanları hedef ülkenin eğitim terminolojisine uygun aktarılmalıdır.', image: '/yp-metropol/document.webp', highlights: ['Eğitim terminolojisi', 'Not ve kredi tabloları', 'Apostil ve denklik desteği'], scope: ['Lise ve üniversite diplomaları', 'Transkript ve not dökümleri', 'Ders içerikleri ve müfredat', 'Öğrenci belgesi ve mezuniyet yazıları'], expertise: 'Tablo yapısı, ders kodları, kredi ve not değerleri kaynakla birebir korunur; derece unvanlarının karşılıkları hedef ülkenin sistemine göre seçilir.', keywords: ['diploma tercumesi', 'transkript tercumesi', 'denklik belgesi tercumesi', 'diploma apostil'], extra: [{ title: 'Denklik ve yurt dışı başvuru süreci', paragraphs: ['Yurt dışında alınan diplomaların Türkiye’de denkliği veya Türkiye’de alınan diplomaların yurt dışında kullanımı için genellikle yeminli tercüme, noter tasdiki ve apostil sırası birlikte planlanır.', 'Başvuru yapılacak üniversite veya kurumun güncel şartları teyit edildikten sonra belge hazırlığı tek seferde tamamlanır.'], bullets: ['Yeminli ve noter onaylı tercüme', 'Apostil yönlendirmesi', 'Kurum şartlarının teyidi'] }] }),
+  createServicePage({ slug: 'vize-evraklari-tercumesi', title: 'Vize Evrakları Tercümesi', description: 'Schengen, ABD, İngiltere ve diğer ülke vize başvuruları için nüfus, banka, iş ve destek evraklarının tercümesi.', intro: 'Vize dosyalarında her konsolosluğun istediği belge listesi ve tercüme şartı farklıdır; eksik veya hatalı tercüme başvurunun gecikmesine yol açabilir.', image: '/yp-metropol/document.webp', highlights: ['Konsolosluğa uygun format', 'Eksiksiz dosya kontrolü', 'Randevu tarihine göre teslim'], scope: ['Tam vukuatlı nüfus kayıt örneği', 'Banka hesap dökümü ve maaş bordrosu', 'SGK hizmet dökümü ve işveren yazısı', 'Tapu, araç ruhsatı ve öğrenci belgesi'], expertise: 'Belgedeki isim, tarih ve tutarlar kaynakla karşılaştırılır; konsolosluğun yeminli tercüme veya noter onayı talebi başvuru öncesi kontrol edilir.', keywords: ['vize evraklari tercumesi', 'vize tercumesi', 'schengen vize tercume', 'konsolosluk evrak tercumesi'], extra: [{ title: 'Randevu tarihinize göre planlama', paragraphs: ['Vize randevu tarihinizi paylaştığınızda tüm belgelerin tercümesi bu tarihe göre planlanır. Birden fazla aile üyesinin dosyası tek seferde hazırlanabilir.', 'Almanca, Fransızca, İtalyanca, İspanyolca, Hollandaca ve İngilizce başta olmak üzere konsoloslukların talep ettiği dillerde tercüme yapılır.'], bullets: ['Randevuya göre teslim', 'Aile dosyalarının toplu hazırlığı', 'Konsolosluk dillerinde tercüme'] }] }),
 ];
 
 const locationPages: readonly LandingPage[] = [
-  createLocationPage({ slug: 'sisli-tercume-burosu', name: 'Şişli', nearby: 'Mecidiyeköy, Fulya ve Bomonti' }),
-  createLocationPage({ slug: 'taksim-tercume', name: 'Taksim', nearby: 'Beyoğlu, Harbiye ve Cihangir' }),
-  createLocationPage({ slug: 'etiler-tercume', name: 'Etiler', nearby: 'Levent, Bebek ve Akatlar' }),
-  createLocationPage({ slug: 'caglayan-tercume', name: 'Çağlayan', nearby: 'Şişli, Kağıthane ve Mecidiyeköy' }),
-  createLocationPage({ slug: 'okmeydani-tercume', name: 'Okmeydanı', nearby: 'Şişli, Çağlayan ve Kasımpaşa' }),
-  createLocationPage({ slug: 'bomonti-tercume', name: 'Bomonti', nearby: 'Şişli, Osmanbey ve Kurtuluş' }),
-  createLocationPage({ slug: 'maslak-tercume', name: 'Maslak', nearby: 'Levent, Ayazağa ve İstinye' }),
-  createLocationPage({ slug: 'osmanbey-tercume', name: 'Osmanbey', nearby: 'Nişantaşı, Şişli ve Harbiye' }),
-  createLocationPage({ slug: 'harbiye-tercume', name: 'Harbiye', nearby: 'Taksim, Nişantaşı ve Elmadağ' }),
-  createLocationPage({ slug: 'fulya-tercume', name: 'Fulya', nearby: 'Şişli, Mecidiyeköy ve Gayrettepe' }),
+  createLocationPage({
+    slug: 'mecidiyekoy-tercume',
+    name: 'Mecidiyeköy',
+    nearby: 'Şişli, Gayrettepe, Esentepe ve Fulya',
+    title: 'Mecidiyeköy Tercüme Bürosu',
+    description: 'Mecidiyeköy’deki ofisimizde yeminli, noter onaylı, hukuki, akademik ve sözlü tercüme. Online belge gönderimi ve hızlı teklif.',
+    local: {
+      title: 'Ofisimiz Mecidiyeköy’de: elden teslim ve hızlı randevu',
+      paragraphs: [
+        'YP Metropol Tercüme’nin ofisi doğrudan Mecidiyeköy’dedir. Belgenizin aslını elden bırakabilir, yeminli tercüme ve noter onayı gereken işlemleri tek noktadan planlayabilirsiniz. Bölgedeki noterlere yakınlık, noter tasdikli tercümelerde gidiş-geliş süresini kısaltır.',
+        'Mecidiyeköy; M2 Yenikapı–Hacıosman ve M7 metro hatlarının ve metrobüsün kesiştiği bir aktarma noktası olduğu için İstanbul’un pek çok semtinden kolayca ulaşılabilir. Ofise gelemeyen müşteriler için ön inceleme ve teklif tamamen online yürütülür.',
+      ],
+      bullets: ['Belge aslının elden teslimi', 'Yakın noterlerle tasdik planlaması', 'Metro ve metrobüs ile kolay ulaşım', 'Online ön inceleme ve teklif'],
+    },
+  }),
+  createLocationPage({
+    slug: 'sisli-tercume-burosu',
+    name: 'Şişli',
+    nearby: 'Mecidiyeköy, Fulya ve Bomonti',
+    local: {
+      title: 'Şişli’de şirketler, hukuk büroları ve bireysel başvurular için',
+      paragraphs: [
+        'Şişli; plaza ofisleri, hukuk büroları, hastaneler ve konsolosluk başvurularına hazırlanan bireysel müşterilerin yoğun olduğu bir ilçedir. Ofisimiz Şişli sınırları içindeki Mecidiyeköy’de bulunduğundan ilçe genelindeki taleplere aynı gün içinde dönüş yapılabilir.',
+        'Şirket evrakı, vekâletname, sağlık raporu ve vize dosyası gibi belgelerde yeminli tercüme ve noter tasdiki birlikte planlanır.',
+      ],
+      bullets: ['Şirket ve ticaret sicil evrakları', 'Hukuk bürolarına dava ve sözleşme tercümesi', 'Sağlık raporu ve epikriz tercümesi', 'Vize ve konsolosluk dosyaları'],
+    },
+  }),
+  createLocationPage({
+    slug: 'taksim-tercume',
+    name: 'Taksim',
+    nearby: 'Beyoğlu, Harbiye ve Cihangir',
+    local: {
+      title: 'Taksim ve Beyoğlu’ndaki konsolosluk başvurularına destek',
+      paragraphs: [
+        'Taksim ve Beyoğlu çevresi, birçok ülkenin İstanbul başkonsolosluğuna ve otel, turizm, etkinlik sektörüne yakınlığıyla bilinir. Vize, oturum, evlilik veya vatandaşlık başvurusu için hazırlanan belgelerin hangi onayla sunulacağı başvurudan önce netleştirilir.',
+        'Taksim’den M2 metro hattıyla Osmanbey üzerinden Şişli-Mecidiyeköy durağına kısa sürede ulaşarak belgenizi ofisimize teslim edebilirsiniz.',
+      ],
+      bullets: ['Konsolosluk ve vize dosyaları', 'Turizm ve otelcilik metinleri', 'Etkinlik ve kongre tercümanlığı', 'M2 ile kolay ulaşım'],
+    },
+  }),
+  createLocationPage({
+    slug: 'etiler-tercume',
+    name: 'Etiler',
+    nearby: 'Levent, Bebek ve Akatlar',
+    local: {
+      title: 'Etiler’de kurumsal ve bireysel tercüme ihtiyaçları',
+      paragraphs: [
+        'Etiler ve Akatlar çevresindeki şirket merkezleri, klinikler, okullar ve aileler için özellikle akademik başvuru, sağlık ve yurt dışı eğitim belgelerinde tercüme desteği verilir.',
+        'Diploma, transkript, okul kayıt ve aşı belgeleri gibi evraklar yurt dışındaki kurumun istediği formata göre hazırlanır; gerektiğinde apostil adımı da planlanır.',
+      ],
+      bullets: ['Yurt dışı eğitim başvuruları', 'Klinik ve sağlık belgeleri', 'Kurumsal sözleşmeler', 'Apostil yönlendirmesi'],
+    },
+  }),
+  createLocationPage({
+    slug: 'caglayan-tercume',
+    name: 'Çağlayan',
+    nearby: 'Şişli, Kağıthane ve Mecidiyeköy',
+    local: {
+      title: 'Çağlayan Adliyesi’ne yakın hukuki tercüme',
+      paragraphs: [
+        'Çağlayan, İstanbul Adalet Sarayı’nın bulunduğu bölge olduğu için dava dosyası, bilirkişi raporu, mahkeme kararı, tebligat ve vekâletname tercümelerinin en sık talep edildiği yerlerden biridir.',
+        'Hukuki metinlerde terminoloji, tarih, dosya numarası ve taraf isimleri kaynakla tek tek karşılaştırılır. Çağlayan’dan M7 metro hattıyla Mecidiyeköy’e bir durakta ulaşabilirsiniz.',
+      ],
+      bullets: ['Mahkeme kararı ve dava dosyaları', 'Bilirkişi raporları', 'Tebligat ve vekâletname', 'M7 ile bir durak mesafe'],
+    },
+  }),
+  createLocationPage({
+    slug: 'okmeydani-tercume',
+    name: 'Okmeydanı',
+    nearby: 'Şişli, Çağlayan ve Kasımpaşa',
+    local: {
+      title: 'Okmeydanı’nda sağlık ve resmî belge tercümesi',
+      paragraphs: [
+        'Okmeydanı ve çevresindeki hastaneler nedeniyle epikriz, sağlık kurulu raporu, tahlil sonucu ve tedavi planı gibi tıbbi belgelerin tercümesi bölgede sık talep edilir. Tıbbi metinler alanında deneyimli tercümanlarla, hasta gizliliğine dikkat edilerek hazırlanır.',
+        'Yurt dışında tedavi, sigorta veya resmî başvuru için gereken onay türü ilgili kurumdan teyit edilerek süreç planlanır.',
+      ],
+      bullets: ['Epikriz ve sağlık raporları', 'Tahlil ve görüntüleme sonuçları', 'Sigorta ve tedavi belgeleri', 'Gizlilik esaslı çalışma'],
+    },
+  }),
+  createLocationPage({
+    slug: 'bomonti-tercume',
+    name: 'Bomonti',
+    nearby: 'Şişli, Osmanbey ve Kurtuluş',
+    local: {
+      title: 'Bomonti’de otel, kongre ve kurumsal etkinlik tercümesi',
+      paragraphs: [
+        'Bomonti’deki oteller ve kongre alanları uluslararası toplantı, lansman ve eğitim etkinliklerine ev sahipliği yapar. Bu etkinlikler için ardıl veya simultane tercüman, sunum ve katılımcı materyali çevirisi planlanabilir.',
+        'Bölgedeki ofis ve yeni konut projelerinde çalışan yabancı uyruklu kişilerin oturum izni, kira sözleşmesi ve banka belgeleri de yeminli olarak hazırlanır.',
+      ],
+      bullets: ['Kongre ve lansman tercümanlığı', 'Sunum ve etkinlik materyalleri', 'Oturum izni belgeleri', 'Kira ve banka evrakı'],
+    },
+  }),
+  createLocationPage({
+    slug: 'maslak-tercume',
+    name: 'Maslak',
+    nearby: 'Levent, Ayazağa ve İstinye',
+    local: {
+      title: 'Maslak’taki şirket merkezleri için kurumsal tercüme',
+      paragraphs: [
+        'Maslak, banka, holding ve teknoloji şirketlerinin genel müdürlüklerinin bulunduğu bir iş merkezidir. Finansal rapor, yönetim kurulu kararı, iç politika, teknik doküman ve ihale dosyalarında terminoloji birliği korunarak kurumsal tercüme yapılır.',
+        'Maslak’tan M2 metro hattıyla Levent ve Gayrettepe üzerinden Şişli-Mecidiyeköy’e doğrudan ulaşılır. Düzenli işlerde terim listesi ve teslim takvimi oluşturulur.',
+      ],
+      bullets: ['Finansal rapor ve denetim belgeleri', 'Yönetim kurulu kararları', 'Teknik ve yazılım dokümanları', 'İhale ve teklif dosyaları'],
+    },
+  }),
+  createLocationPage({
+    slug: 'osmanbey-tercume',
+    name: 'Osmanbey',
+    nearby: 'Nişantaşı, Şişli ve Harbiye',
+    local: {
+      title: 'Osmanbey’de tekstil ve dış ticaret evrakı tercümesi',
+      paragraphs: [
+        'Osmanbey ve Halaskargazi Caddesi çevresi tekstil, hazır giyim ve toptan ticaretle bilinir. İhracat yapan firmalar için proforma fatura, menşe belgesi, ürün kataloğu, gümrük ve sözleşme tercümeleri hazırlanır.',
+        'Osmanbey, M2 hattında Şişli-Mecidiyeköy’e komşu duraktır; belgelerinizi kısa sürede ofisimize ulaştırabilirsiniz.',
+      ],
+      bullets: ['Proforma fatura ve menşe belgesi', 'Ürün kataloğu ve etiket metinleri', 'Dış ticaret sözleşmeleri', 'Rusça, Arapça, İngilizce ticari tercüme'],
+    },
+  }),
+  createLocationPage({
+    slug: 'harbiye-tercume',
+    name: 'Harbiye',
+    nearby: 'Taksim, Nişantaşı ve Elmadağ',
+    local: {
+      title: 'Harbiye’de kongre, konferans ve resmî belge tercümesi',
+      paragraphs: [
+        'Harbiye’deki kongre ve kültür merkezleri uluslararası konferans, sempozyum ve törenlere ev sahipliği yapar. Bu tür etkinlikler için simultane ve ardıl tercüman, konuşma metni ve sunum çevirisi planlanabilir.',
+        'Bölgedeki oteller ve konsolosluklara yakınlık nedeniyle vize, evlilik ve kimlik belgeleri için yeminli ve noter onaylı tercüme de sık talep edilir.',
+      ],
+      bullets: ['Simultane ve ardıl tercüman', 'Konuşma ve sunum çevirisi', 'Vize ve evlilik belgeleri', 'Noter onaylı tercüme'],
+    },
+  }),
+  createLocationPage({
+    slug: 'fulya-tercume',
+    name: 'Fulya',
+    nearby: 'Şişli, Mecidiyeköy ve Gayrettepe',
+    local: {
+      title: 'Fulya’dan ofisimize birkaç dakikada ulaşın',
+      paragraphs: [
+        'Fulya, Mecidiyeköy’e yürüme mesafesinde olan ve M7 metro hattında Mecidiyeköy’ün komşu durağı bulunan bir semttir. Bu yakınlık sayesinde belge aslının teslimi ve teslim alınması çoğu zaman aynı gün içinde tamamlanabilir.',
+        'Bölgedeki ofis kuleleri ve sağlık kuruluşları için kurumsal yazışma, sözleşme ve tıbbi rapor tercümeleri yapılır.',
+      ],
+      bullets: ['Yürüme mesafesinde ofis', 'Aynı gün teslim planlaması', 'Kurumsal yazışma ve sözleşmeler', 'Tıbbi rapor tercümesi'],
+    },
+  }),
+  createLocationPage({
+    slug: 'levent-tercume',
+    name: 'Levent',
+    nearby: '4. Levent, Esentepe ve Etiler',
+    local: {
+      title: 'Levent ve Büyükdere Caddesi plazalarına kurumsal tercüme',
+      paragraphs: [
+        'Levent ve Büyükdere Caddesi boyunca uzanan plazalar; banka, sigorta, danışmanlık ve hukuk firmalarının yoğun olduğu bir iş bölgesidir. Şirket ana sözleşmesi, imza sirküleri, finansal tablolar ve uluslararası yazışmalar uzman tercümanlarla hazırlanır.',
+        'Levent, M2 hattında Gayrettepe’den sonra Şişli-Mecidiyeköy’e iki durak mesafededir. Gizlilik gerektiren dosyalarda erişim proje ekibiyle sınırlandırılır.',
+      ],
+      bullets: ['Ana sözleşme ve imza sirküleri', 'Finansal tablo ve raporlar', 'Hukuk firması dosyaları', 'Gizlilik sözleşmeli çalışma'],
+    },
+  }),
+  createLocationPage({
+    slug: 'bebek-tercume',
+    name: 'Bebek',
+    nearby: 'Arnavutköy, Rumelihisarı ve Etiler',
+    local: {
+      title: 'Bebek’te akademik ve yurt dışı eğitim tercümesi',
+      paragraphs: [
+        'Bebek ve Rumelihisarı çevresi, köklü üniversiteleri ve okullarıyla akademik çevrenin yoğun olduğu bir bölgedir. Makale, tez özeti, burs başvurusu, referans mektubu, diploma ve transkript tercümeleri akademik terminolojiye uygun hazırlanır.',
+        'Yurt dışındaki üniversitelerin istediği yeminli tercüme, noter tasdiki veya apostil şartı başvurudan önce kontrol edilir.',
+      ],
+      bullets: ['Makale ve tez özeti', 'Burs ve referans mektupları', 'Diploma ve transkript', 'Apostil ve denklik desteği'],
+    },
+  }),
+  createLocationPage({
+    slug: 'ortakoy-tercume',
+    name: 'Ortaköy',
+    nearby: 'Beşiktaş, Kuruçeşme ve Yıldız',
+    local: {
+      title: 'Ortaköy’de turizm, etkinlik ve kişisel belge tercümesi',
+      paragraphs: [
+        'Ortaköy ve Kuruçeşme çevresindeki etkinlik mekânları, oteller ve restoranlar için menü, tanıtım metni ve etkinlik materyali çevirisi yapılır. Yabancı ziyaretçilerin katıldığı organizasyonlarda refakat tercümanı da planlanabilir.',
+        'Bölgede yaşayan yabancı uyruklu kişiler için evlilik, oturum ve noter işlemlerinde yeminli tercüme ve sözlü tercüman desteği verilir.',
+      ],
+      bullets: ['Menü ve tanıtım metinleri', 'Etkinlik ve refakat tercümanı', 'Evlilik ve oturum belgeleri', 'Noterde sözlü tercüman'],
+    },
+  }),
+  createLocationPage({
+    slug: 'pangalti-tercume',
+    name: 'Pangaltı',
+    nearby: 'Harbiye, Kurtuluş ve Osmanbey',
+    local: {
+      title: 'Pangaltı’nda bireysel ve resmî belge tercümesi',
+      paragraphs: [
+        'Pangaltı, Harbiye ile Osmanbey arasında yer alan ve okulları, sağlık kuruluşları ve konut alanlarıyla öne çıkan bir semttir. Okul kaydı, denklik, nüfus kaydı ve sağlık belgeleri gibi bireysel evraklarda yeminli tercüme yapılır.',
+        'Osmanbey metro durağına yakınlık sayesinde Mecidiyeköy’deki ofisimize bir durakla ulaşabilirsiniz.',
+      ],
+      bullets: ['Okul kaydı ve denklik', 'Nüfus ve kimlik belgeleri', 'Sağlık evrakları', 'Osmanbey üzerinden kolay ulaşım'],
+    },
+  }),
+  createLocationPage({
+    slug: 'gayrettepe-tercume',
+    name: 'Gayrettepe',
+    nearby: 'Esentepe, Zincirlikuyu ve Mecidiyeköy',
+    local: {
+      title: 'Gayrettepe’de iş merkezlerine yakın hızlı tercüme',
+      paragraphs: [
+        'Gayrettepe, M2 hattında Şişli-Mecidiyeköy’ün hemen sonraki durağıdır ve yoğun iş merkezleriyle çevrilidir. Şirketlerin acil sözleşme, teklif ve yazışma ihtiyaçları için öncelikli iş akışı planlanabilir.',
+        'Zincirlikuyu ve Esentepe’deki ofisler için düzenli tercüme işlerinde terminoloji listesi oluşturularak tutarlılık sağlanır.',
+      ],
+      bullets: ['Bir metro durağı mesafe', 'Acil sözleşme ve teklif tercümesi', 'Düzenli kurumsal işler', 'Terminoloji yönetimi'],
+    },
+  }),
+  createLocationPage({
+    slug: 'kagithane-tercume',
+    name: 'Kağıthane',
+    nearby: 'Çağlayan, Seyrantepe ve Gültepe',
+    local: {
+      title: 'Kağıthane’de yeni iş merkezleri ve bireysel başvurular',
+      paragraphs: [
+        'Kağıthane, son yıllarda yeni ofis ve konut projeleriyle hızla büyüyen bir ilçedir. Bölgeye taşınan şirketler için kuruluş evrakı, iş sözleşmesi ve teknik doküman tercümesi; bireysel müşteriler için de nüfus, eğitim ve vize belgeleri hazırlanır.',
+        'Kağıthane’den M7 hattıyla Çağlayan üzerinden Mecidiyeköy’e ulaşabilirsiniz.',
+      ],
+      bullets: ['Şirket kuruluş evrakları', 'İş ve kira sözleşmeleri', 'Vize ve eğitim belgeleri', 'M7 ile doğrudan ulaşım'],
+    },
+  }),
+  createLocationPage({
+    slug: 'nisantasi-tercume',
+    name: 'Nişantaşı',
+    nearby: 'Teşvikiye, Maçka ve Osmanbey',
+    local: {
+      title: 'Nişantaşı’nda moda, klinik ve kişisel belge tercümesi',
+      paragraphs: [
+        'Nişantaşı ve Teşvikiye çevresi moda markaları, estetik ve sağlık klinikleri ile bilinir. Marka kataloğu, ürün açıklaması, klinik bilgilendirme formu ve hasta onam metni gibi içerikler hedef kitleye uygun dille çevrilir.',
+        'Sağlık turizmi kapsamında gelen yabancı hastalar için tedavi planı ve rapor tercümeleri de gizlilik esasıyla hazırlanır.',
+      ],
+      bullets: ['Marka ve ürün metinleri', 'Klinik ve onam formları', 'Sağlık turizmi belgeleri', 'Web sitesi lokalizasyonu'],
+    },
+  }),
 ];
 
 const guidePages: readonly LandingPage[] = [

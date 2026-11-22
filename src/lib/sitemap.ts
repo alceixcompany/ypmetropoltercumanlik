@@ -7,6 +7,8 @@ import { translationServices } from '@/lib/translation-services'
 import { translationLanguages } from '@/lib/translation-languages'
 import { serviceAreas } from '@/lib/service-areas'
 import { landingPages } from '@/lib/landing-pages'
+import { areaHref, languageHref, serviceHref } from '@/lib/site-links'
+import { englishPages } from '@/lib/en-pages'
 
 export type SitemapEntry = MetadataRoute.Sitemap[number]
 
@@ -105,7 +107,7 @@ export function getLandingPageEntries(site: SiteConfig = siteConfig): MetadataRo
 
 export function getServiceEntries(site: SiteConfig = siteConfig): MetadataRoute.Sitemap {
   return translationServices.map((service) => ({
-    url: absoluteSitemapUrl(`/hizmetlerimiz/${service.slug}`, site),
+    url: absoluteSitemapUrl(serviceHref(service.slug), site),
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.8,
@@ -116,11 +118,23 @@ export const serviceEntries = getServiceEntries();
 
 export function getLanguageEntries(site: SiteConfig = siteConfig): MetadataRoute.Sitemap {
   return translationLanguages.map((language) => ({
-    url: absoluteSitemapUrl(`/dillerimiz/${language.slug}`, site),
+    url: absoluteSitemapUrl(languageHref(language.slug), site),
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.8,
   }));
+}
+
+export function getEnglishEntries(site: SiteConfig = siteConfig): MetadataRoute.Sitemap {
+  return [
+    { url: absoluteSitemapUrl('/en', site), lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.8 },
+    ...englishPages.map((page) => ({
+      url: absoluteSitemapUrl(`/en/${page.slug}`, site),
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
+  ]
 }
 
 export async function getNewsEntries(site: SiteConfig = siteConfig): Promise<MetadataRoute.Sitemap> {
@@ -145,31 +159,39 @@ export async function getNewsEntries(site: SiteConfig = siteConfig): Promise<Met
 
 export async function getServiceAreaEntries(site: SiteConfig = siteConfig): Promise<MetadataRoute.Sitemap> {
   return serviceAreas.map((area) => ({
-    url: absoluteSitemapUrl(`/hizmet-bolgelerimiz/${area.slug}`, site),
+    url: absoluteSitemapUrl(areaHref(area.slug), site),
     lastModified: new Date(),
     changeFrequency: 'monthly' as const,
     priority: 0.8,
   }))
 }
 
+function dedupeEntries(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
+  const seen = new Set<string>()
+  return entries.filter((entry) => {
+    if (seen.has(entry.url)) return false
+    seen.add(entry.url)
+    return true
+  })
+}
+
 export async function getAllSitemapEntries(site: SiteConfig = siteConfig): Promise<MetadataRoute.Sitemap> {
+  const base = [
+    ...getStaticPageEntries(site),
+    ...getLandingPageEntries(site),
+    ...getServiceEntries(site),
+    ...getLanguageEntries(site),
+    ...getEnglishEntries(site),
+  ]
   try {
     const [newsEntries, serviceAreaEntries] = await Promise.all([
       getNewsEntries(site),
       getServiceAreaEntries(site),
     ])
-
-    return [
-      ...getStaticPageEntries(site),
-      ...getLandingPageEntries(site),
-      ...getServiceEntries(site),
-      ...getLanguageEntries(site),
-      ...newsEntries,
-      ...serviceAreaEntries,
-    ]
+    return dedupeEntries([...base, ...newsEntries, ...serviceAreaEntries])
   } catch (error) {
     console.error('Sitemap oluşturulurken hata:', error)
-    return [...getStaticPageEntries(site), ...getLandingPageEntries(site), ...getServiceEntries(site), ...getLanguageEntries(site)]
+    return dedupeEntries(base)
   }
 }
 

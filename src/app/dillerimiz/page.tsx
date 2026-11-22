@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { languageHref } from '@/lib/site-links';
 import { FiArrowRight, FiCheckCircle } from 'react-icons/fi';
 import JsonLd from '@/components/JsonLd';
 import PageHero from '@/components/PageHero';
@@ -28,7 +29,7 @@ export default async function LanguagesPage() {
       '@type': 'ListItem',
       position: index + 1,
       name: `${language.name} Tercüme`,
-      url: absoluteUrl(`/dillerimiz/${language.slug}`, site),
+      url: absoluteUrl(languageHref(language.slug), site),
     })),
   };
 
@@ -40,7 +41,7 @@ export default async function LanguagesPage() {
         <div className="relative mx-auto max-w-7xl px-5 sm:px-7 lg:px-10">
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {translationLanguages.map((language) => (
-              <Link key={language.slug} href={`/dillerimiz/${language.slug}`} className="group rounded-[18px] border border-[rgba(195,149,58,0.16)] bg-white/88 p-6 shadow-[0_16px_45px_rgba(17,17,17,0.06)] transition hover:-translate-y-1 hover:border-[rgba(195,149,58,0.36)]">
+              <Link key={language.slug} href={languageHref(language.slug)} className="group rounded-[18px] border border-[rgba(195,149,58,0.16)] bg-white/88 p-6 shadow-[0_16px_45px_rgba(17,17,17,0.06)] transition hover:-translate-y-1 hover:border-[rgba(195,149,58,0.36)]">
                 <span className="text-4xl" aria-hidden="true">{language.flag}</span>
                 <h2 className="mt-5 font-serif text-2xl text-[var(--dream-dark)]">{language.name} Tercüme</h2>
                 <p className="mt-2 text-sm text-[var(--dream-text)]">{language.nativeName}</p>

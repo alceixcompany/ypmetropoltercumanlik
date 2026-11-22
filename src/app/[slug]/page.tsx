@@ -7,8 +7,25 @@ import PageHero from '@/components/PageHero';
 import { getLandingPage, landingPages } from '@/lib/landing-pages';
 import { absoluteUrl, breadcrumbJsonLd, createSeoMetadata } from '@/lib/seo';
 import { getRequestSiteConfig } from '@/lib/server-seo';
+import { englishAlternateForTrPath } from '@/lib/en-pages';
 
 type Props = { params: Promise<{ slug: string }> };
+
+// Arama sonuçlarında tıklanma oranını artırmak için öncelikli sayfalara özel başlıklar
+const seoTitles: Record<string, string> = {
+  'noter-onayli-tercume': 'Noter Onaylı Tercüme Mecidiyeköy – Online Belge, Hızlı Teklif',
+  'yeminli-tercume': 'Yeminli Tercüme Bürosu Şişli Mecidiyeköy – 20+ Dil',
+  'mecidiyekoy-tercume': 'Mecidiyeköy Tercüme Bürosu – Yeminli & Noter Onaylı Tercüme',
+  'sisli-tercume-burosu': 'Şişli Tercüme Bürosu – Yeminli ve Noter Onaylı Tercüme',
+  'pasaport-tercumesi': 'Noter Onaylı Pasaport Tercümesi – Aynı Gün Teslim İmkânı',
+  'apostil-onayi': 'Apostil Onayı Nasıl Alınır? Belge ve Tercüme Süreci',
+  'ingilizce-tercume': 'İngilizce Yeminli Tercüme – Noter Onaylı, Hızlı Teslim',
+  'arapca-tercume': 'Arapça Yeminli Tercüme – Noter Onaylı Belge Çevirisi',
+  'rusca-tercume': 'Rusça Yeminli Tercüme – Noter Onaylı Belge Çevirisi',
+  'almanca-tercume': 'Almanca Yeminli Tercüme – Vize ve Resmî Belgeler',
+  'yabanci-evlilik': 'Yabancı Evlilik İşlemleri – Belge Tercümesi ve Tercüman',
+  'vize-evraklari-tercumesi': 'Vize Evrakları Tercümesi – Randevu Tarihine Göre Teslim',
+};
 
 export function generateStaticParams() {
   return landingPages.map(({ slug }) => ({ slug }));
@@ -22,7 +39,7 @@ export async function generateMetadata({ params }: Props) {
   if (!page) return {};
 
   return createSeoMetadata({
-    title: page.title,
+    title: seoTitles[page.slug] ?? page.title,
     description: page.description,
     path: `/${page.slug}`,
     image: page.image,
@@ -30,6 +47,7 @@ export async function generateMetadata({ params }: Props) {
     type: page.kind === 'guide' ? 'article' : 'website',
     publishedTime: page.publishedAt,
     site,
+    alternateLanguages: englishAlternateForTrPath[`/${page.slug}`] ? { en: englishAlternateForTrPath[`/${page.slug}`] } : undefined,
   });
 }
 

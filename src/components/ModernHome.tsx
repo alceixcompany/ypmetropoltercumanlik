@@ -24,7 +24,7 @@ const services = [
     number: '01',
     title: 'Yeminli Tercüme',
     description: 'Resmî kurumlarda kullanılacak belgeler için imzalı ve kontrollü çeviri.',
-    href: '/hizmetlerimiz/yeminli-tercume',
+    href: '/yeminli-tercume',
     icon: FiShield,
     image: '/yp-metropol/home/document-review-v2.webp',
   },
@@ -32,7 +32,7 @@ const services = [
     number: '02',
     title: 'Noter Onaylı Tercüme',
     description: 'Belgenizin kullanım amacına göre noter sürecine uygun hazırlık.',
-    href: '/hizmetlerimiz/noter-onayli-tercume',
+    href: '/noter-onayli-tercume',
     icon: FiFileText,
     image: '/yp-metropol/home/legal-review-v2.webp',
   },
@@ -40,7 +40,7 @@ const services = [
     number: '03',
     title: 'Hukuki Tercüme',
     description: 'Sözleşme, vekâletname ve mahkeme evraklarında terminoloji hassasiyeti.',
-    href: '/hizmetlerimiz/hukuki-tercume',
+    href: '/hukuki-tercume',
     icon: FiCheck,
     image: '/yp-metropol/home/legal-review-v2.webp',
   },
@@ -48,7 +48,7 @@ const services = [
     number: '04',
     title: 'Teknik Tercüme',
     description: 'Kılavuz, şartname ve proje dosyalarında alan uzmanlığı ve tutarlılık.',
-    href: '/hizmetlerimiz/teknik-tercume',
+    href: '/teknik-tercume',
     icon: FiGlobe,
     image: '/yp-metropol/home/technical-review-v2.webp',
   },
@@ -56,7 +56,7 @@ const services = [
     number: '05',
     title: 'Sözlü Tercüme',
     description: 'Toplantı, noter, fuar ve etkinliklerde ardıl veya simultane destek.',
-    href: '/hizmetlerimiz/sozlu-tercume',
+    href: '/sozlu-tercume',
     icon: FiMessageCircle,
     image: '/yp-metropol/home/interpreting-meeting-v2.webp',
   },
@@ -64,7 +64,7 @@ const services = [
     number: '06',
     title: 'Web Sitesi Lokalizasyonu',
     description: 'Dijital içerikler için hedef pazara ve arama diline uyarlanmış çeviri.',
-    href: '/hizmetlerimiz/web-site-tercume',
+    href: '/web-site-tercume',
     icon: FiSend,
     image: '/yp-metropol/home/hero-office-v2.webp',
   },
@@ -136,12 +136,12 @@ export default function ModernHome() {
             transition={{ duration: 0.85, delay: 0.25, ease: 'easeOut' }}
             className="max-w-3xl"
           >
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#e1bd78]">YP Metropol Tercüme · İstanbul</p>
-            <h1 className="mt-5 font-serif text-[48px] font-normal leading-[1.02] tracking-[-0.035em] text-white sm:text-[68px] lg:text-[82px]">
+            <h1 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#e1bd78]">Mecidiyeköy Tercüme Bürosu · YP Metropol Tercüme</h1>
+            <p className="mt-5 font-serif text-[48px] font-normal leading-[1.02] tracking-[-0.035em] text-white sm:text-[68px] lg:text-[82px]">
               Her dilde,<br />güvenilir tercüme.
-            </h1>
+            </p>
             <p className="mt-6 max-w-xl text-base leading-7 text-white/78 sm:text-lg">
-              Yeminli, noter onaylı, yazılı ve sözlü tercüme hizmetleri.
+              Şişli Mecidiyeköy’de yeminli, noter onaylı, yazılı ve sözlü tercüme. Belgenizi online gönderin, hızlı teklif alın.
             </p>
             <Link href="/iletisim" className="group mt-8 inline-flex items-center gap-3 border-b border-white/55 pb-2 text-sm font-semibold text-white transition hover:border-[#e1bd78] hover:text-[#e1bd78]">
               Belgeniz için teklif alın

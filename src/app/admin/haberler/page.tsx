@@ -4,6 +4,7 @@ import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import Image from 'next/image';
 import CKEditorComponent from '@/components/CKEditorComponent';
+import { createSlug, requestIndexing, siteUrl } from '@/lib/request-indexing';
 
 interface Haber {
   id: string;
@@ -89,6 +90,12 @@ const AdminNews = () => {
       if (editingHaber) {
         // Update existing news
         await updateDoc(doc(db, 'haberler', editingHaber.id), haberData);
+
+        // Google Indexing: başlık değiştiyse eski URL silindi, yeni URL güncellendi
+        const oldUrl = siteUrl(`/haberler/${createSlug(editingHaber.title)}`);
+        const newUrl = siteUrl(`/haberler/${createSlug(haberData.title)}`);
+        if (oldUrl !== newUrl && editingHaber.isActive) void requestIndexing(oldUrl, 'URL_DELETED');
+        void requestIndexing(newUrl, haberData.isActive ? 'URL_UPDATED' : 'URL_DELETED');
         
         // Eğer bu haber öne çıkan olarak işaretlendiyse, diğerlerini öne çıkan olmaktan çıkar
         if (haberData.featured) {
@@ -103,6 +110,11 @@ const AdminNews = () => {
           ...haberData,
           createdAt: new Date().toISOString()
         });
+
+        // Google Indexing: yeni haberi hemen bildir
+        if (haberData.isActive) {
+          void requestIndexing([siteUrl(`/haberler/${createSlug(haberData.title)}`), siteUrl('/haberler')]);
+        }
         
         // Eğer yeni haber öne çıkan olarak işaretlendiyse, diğerlerini öne çıkan olmaktan çıkar
         if (haberData.featured) {
@@ -150,7 +162,9 @@ const AdminNews = () => {
   const handleDelete = async (haberId: string) => {
     if (confirm('Bu haberi silmek istediğinizden emin misiniz?')) {
       try {
+        const silinen = haberler.find((h) => h.id === haberId);
         await deleteDoc(doc(db, 'haberler', haberId));
+        if (silinen?.isActive) void requestIndexing(siteUrl(`/haberler/${createSlug(silinen.title)}`), 'URL_DELETED');
         fetchHaberler();
       } catch (error) {
         console.error('Haber silinirken hata:', error);

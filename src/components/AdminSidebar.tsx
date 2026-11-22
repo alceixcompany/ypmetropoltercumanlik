@@ -14,7 +14,7 @@ import {
   FiMenu,
   FiUser
 } from 'react-icons/fi';
-import { FiBriefcase } from 'react-icons/fi';
+import { FiBriefcase, FiGlobe } from 'react-icons/fi';
 
 const AdminSidebar = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -27,6 +27,7 @@ const AdminSidebar = () => {
     { name: 'Galeri', href: '/admin/galeri', icon: FiImage },
     { name: 'Referanslar', href: '/admin/referanslar', icon: FiBriefcase },
     { name: 'Haberler', href: '/admin/haberler', icon: FiFileText },
+    { name: 'Google İndeksleme', href: '/admin/indeksleme', icon: FiGlobe },
     { name: 'Mesajlar', href: '/admin/mesajlar', icon: FiMessageSquare },
     { name: 'Ayarlar', href: '/admin/ayarlar', icon: FiSettings },
   ];

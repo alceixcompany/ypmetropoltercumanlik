@@ -45,3 +45,7 @@ Thumbs.db
 *.key
 serviceAccountKey.json
 *-firebase-adminsdk-*.json
+
+# Google Indexing API servis hesabı anahtarı (ASLA commit etme)
+/secrets/
+google-key.json

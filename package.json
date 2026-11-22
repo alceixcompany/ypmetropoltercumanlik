@@ -9,7 +9,9 @@
     "lint": "next lint",
     "seed": "node scripts/seed-beyvip.mjs",
     "seed:news": "node scripts/seed-yp-news.mjs",
-    "seed:references": "node scripts/seed-references.mjs"
+    "seed:references": "node scripts/seed-references.mjs",
+    "index:url": "node scripts/google-index.mjs",
+    "index:sitemap": "node scripts/google-index.mjs --sitemap https://ypmetropoltercume.com/sitemap.xml --limit 200"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^41.4.2",

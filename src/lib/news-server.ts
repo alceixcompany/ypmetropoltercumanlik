@@ -40,6 +40,7 @@ export const getAllNews = cache(async (): Promise<Haber[]> => {
         description: data.description ?? '',
         content: data.content ?? '',
         imageUrl: typeof data.imageUrl === 'string' ? data.imageUrl : '',
+        slug: typeof data.slug === 'string' ? data.slug : '',
         tags: Array.isArray(data.tags) ? data.tags : [],
         featured: Boolean(data.featured),
         isActive: data.isActive !== false,
@@ -56,13 +57,19 @@ export const getAllNews = cache(async (): Promise<Haber[]> => {
 
 export async function getNewsBySlug(slug: string) {
   const all = await getAllNews();
-  const haber = all.find((h) => h.isActive && (createNewsSlug(h.title) === slug)) ?? null;
+  const primary = all.find((h) => h.isActive && (createNewsSlug(h.title) === slug)) ?? null;
+  // Eski/özel slug alanıyla gelen istekleri başlıktan üretilen asıl adrese yönlendirmek için eşleştir
+  const alt = primary
+    ? null
+    : all.find((h) => h.isActive && Boolean(h.title) && (h as Haber & { slug?: string }).slug === slug) ?? null;
+  const haber = primary ?? alt;
+  const canonicalSlug = alt ? createNewsSlug(alt.title) : slug;
   const related = haber
     ? all
         .filter((h) => h.isActive && h.id !== haber.id && h.tags.some((tag) => haber.tags.includes(tag)))
         .slice(0, 3)
     : [];
-  return { haber, related, loaded: all.length > 0 };
+  return { haber, related, loaded: all.length > 0, canonicalSlug };
 }
 
 export function stripHtml(html: string) {

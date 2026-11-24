@@ -143,7 +143,8 @@ export async function getNewsEntries(site: SiteConfig = siteConfig): Promise<Met
   return newsSnapshot.docs
     .map((doc: DocumentData): SitemapEntry | null => {
       const data = doc.data()
-      const slug = data.slug || createSlug(data.title || '')
+      // Sayfa başlıktan üretilen slug ile açılıyor; sitemap de aynı adresi vermeli (aksi halde 404)
+      const slug = createSlug(data.title || '')
 
       if (!slug) return null
 

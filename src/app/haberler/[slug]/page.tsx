@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 import JsonLd from '@/components/JsonLd';
 import NewsDetailClient from './NewsDetailClient';
 import { getNewsBySlug } from '@/lib/news-server';
@@ -11,10 +11,12 @@ export const revalidate = 600;
 
 export default async function NewsDetailPage({ params }: Props) {
   const { slug } = await params;
-  const [{ haber, related, loaded }, site] = await Promise.all([getNewsBySlug(slug), getRequestSiteConfig()]);
+  const [{ haber, related, loaded, canonicalSlug }, site] = await Promise.all([getNewsBySlug(slug), getRequestSiteConfig()]);
 
   // Veritabanı okunabildiyse ve haber yoksa gerçek 404 döndür (soft-404 yerine)
   if (loaded && !haber) notFound();
+  // Eski slug ile gelindiyse kalıcı olarak asıl adrese yönlendir (sitemap ile aynı adres)
+  if (haber && canonicalSlug !== slug) permanentRedirect(`/haberler/${canonicalSlug}`);
 
   const path = `/haberler/${slug}`;
   const jsonLd = haber
